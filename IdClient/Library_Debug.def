@@ -1,0 +1,26 @@
+LIBRARY
+EXPORTS
+	
+	CreateTokenAuthorize
+	GetAccessToken
+	RefreshToken
+	ValidateToken
+	FreeToken
+	GetToken
+	GetSecret
+	GetUserName
+	GetUserId
+	GetTokenExpiry
+
+
+	
+	UrlEncode
+	UrlDecode
+	Base64Encode
+	HmacSha1
+	;HttpGet
+	;HttpPost
+	;GetPlatformName
+	AllocateMemory
+	ReallocateMemory
+	FreeMemory

@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+*.vcxproj.filters
+*.vcxproj.user
+
+IdClient/.vs/
+IdClientUnitTest/.vs/
+
+IdClient/x64
+IdClientUnitTest/x64
