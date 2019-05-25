@@ -5,25 +5,39 @@
 #include <Windows.h>
 #include <stdlib.h>
 
-void* AllocateMemory(const size_t destSize)
+void* idAllocateMemory(const size_t destSize)
 {
-	void* mem = calloc(1, destSize);
+	HANDLE hHeap = GetProcessHeap();
+	if (hHeap == NULL)
+		return NULL;
+
+	void* mem = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, destSize);
 
 	return mem;
 }
 
-void* ReallocateMemory(void* block, const size_t destSize)
+void* idReallocateMemory(void* block, const size_t destSize)
 {
-	void* mem = realloc(block, destSize);
+	HANDLE hHeap = GetProcessHeap();
+	if (hHeap == NULL)
+		return NULL;
+
+	void* mem = HeapReAlloc(hHeap, HEAP_ZERO_MEMORY, block, destSize);
 
 	return mem;
 }
 
-void FreeMemory(void** block)
+int idFreeMemory(void** block)
 {
 	if (block != NULL)
 	{
-		free(*block);
+		HANDLE hHeap = GetProcessHeap();
+		if (hHeap == NULL)
+			return NULL;
+
+		int ret = HeapFree(hHeap, 0, *block);
 		*block = NULL;
+
+		return ret;
 	}
 }

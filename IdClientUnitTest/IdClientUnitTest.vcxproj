@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="OAuth1Tests.cpp" />
     <ClCompile Include="Platform\Windows\Base64Tests.cpp" />
     <ClCompile Include="Platform\Windows\HmacSha1Tests.cpp" />
     <ClCompile Include="Platform\Windows\UrlLibTests.cpp" />

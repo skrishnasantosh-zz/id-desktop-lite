@@ -140,11 +140,13 @@ COPY $(TargetDir)IdClient.lib $(SolutionDir)..\Dist\</Command>
     <ClInclude Include="HToken.h" />
     <ClInclude Include="IdApp.h" />
     <ClInclude Include="IdClient.h" />
+    <ClInclude Include="OAuth1\OAuth1.h" />
     <ClInclude Include="Platform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="IdClient.cpp" />
+    <ClCompile Include="OAuth1\AuthImpl.cpp" />
     <ClCompile Include="Platform\Win32\Base64.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>

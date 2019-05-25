@@ -9,7 +9,7 @@
 
 #include "../../Platform.h"
 
-wchar_t* Base64Encode(const uint8_t* data, const size_t dataLen, unsigned long* platformErrorCode)
+wchar_t* idBase64Encode(const uint8_t* data, const size_t dataLen, unsigned long* platformErrorCode)
 {
 	DWORD destSizeRecv = 0;
 	BOOL result = FALSE;	
@@ -23,7 +23,7 @@ wchar_t* Base64Encode(const uint8_t* data, const size_t dataLen, unsigned long* 
 	if (!result)
 		return NULL;	
 
-	dest = (wchar_t*)AllocateMemory(destSizeRecv);
+	dest = (wchar_t*)idAllocateMemory(destSizeRecv);
 	if (dest == NULL)
 		return NULL;
 
@@ -33,7 +33,7 @@ wchar_t* Base64Encode(const uint8_t* data, const size_t dataLen, unsigned long* 
 
 	if (!result)
 	{
-		FreeMemory(&dest);
+		idFreeMemory(&dest);
 		return NULL;
 	}
 

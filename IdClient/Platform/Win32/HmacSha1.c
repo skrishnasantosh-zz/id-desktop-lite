@@ -22,9 +22,9 @@ struct BLOB_DMY {
 	BYTE key[0];
 };
 
-uint8_t* HmacSha1(size_t* destLen, const uint8_t* data, const size_t dataLen, const uint8_t* key, const size_t keyLen, unsigned long* platformErrorCode)
+uint8_t* idHmacSha1(size_t* destLen, const uint8_t* data, const size_t dataLen, const uint8_t* key, const size_t keyLen, unsigned long* platformErrorCode)
 {
-	HCRYPTPROV  hProv = NULL;
+	HCRYPTPROV  hProv = NULL;	
 	HCRYPTHASH  hHash = NULL;
 	HCRYPTKEY   hKey = NULL;
 	HCRYPTHASH  hHmacHash = NULL;
@@ -42,6 +42,14 @@ uint8_t* HmacSha1(size_t* destLen, const uint8_t* data, const size_t dataLen, co
 		* platformErrorCode = 0;
 
 	hMacInfo.HashAlgid = CALG_SHA1;
+	
+
+	result = CryptAcquireContext(&hProv, NULL, MS_ENHANCED_PROV, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | CRYPT_NEWKEYSET);
+	if (!result)
+	{
+		if (platformErrorCode != NULL)
+			* platformErrorCode = GetLastError();
+	}
 
 	struct BLOB_DMY* blob = NULL;
 
@@ -53,17 +61,10 @@ uint8_t* HmacSha1(size_t* destLen, const uint8_t* data, const size_t dataLen, co
 	blob->header.bType = PLAINTEXTKEYBLOB;
 	blob->header.aiKeyAlg = CALG_RC2;
 	blob->header.reserved = 0;
-	blob->header.bVersion = CUR_BLOB_VERSION;	
+	blob->header.bVersion = CUR_BLOB_VERSION;
 	blob->len = keyLen;
 
 	memcpy(&(blob->key), key, keyLen + 1); //Copy zero at end	
-
-	result = CryptAcquireContext(&hProv, NULL, MS_ENHANCED_PROV, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | CRYPT_NEWKEYSET);
-	if (!result)
-	{
-		if (platformErrorCode != NULL)
-			* platformErrorCode = GetLastError();
-	}
 
 	result = CryptImportKey(hProv, (BYTE*)blob, blobSize, 0, CRYPT_IPSEC_HMAC_KEY, &hKey);
 	if (!result)
@@ -93,7 +94,7 @@ uint8_t* HmacSha1(size_t* destLen, const uint8_t* data, const size_t dataLen, co
 			* platformErrorCode = GetLastError();
 	}
 
-	pbHash = (uint8_t*)malloc(hashSize + 1);
+	pbHash = (uint8_t*)idAllocateMemory(hashSize + 1);
 	if (pbHash == NULL)
 	{
 		if (platformErrorCode != NULL)
@@ -124,7 +125,7 @@ uint8_t* HmacSha1(size_t* destLen, const uint8_t* data, const size_t dataLen, co
 	if (hProv)
 		CryptReleaseContext(hProv, 0);
 	if (pbHash && !result)
-		free(pbHash);
+		idFreeMemory(pbHash);
 
 	return pbHash; //PlatformErrorCode set to 0 and return NULL if out of memory
 }

@@ -11,7 +11,7 @@
 #pragma comment(lib, "Shlwapi.lib")
 
 
-wchar_t* UrlEncode(const wchar_t* url, unsigned long* platformErrorCode)
+wchar_t* idUrlEncode(const wchar_t* url, unsigned long* platformErrorCode)
 {
 	HRESULT apiResult = E_FAIL;
 	wchar_t sizeTest[1] = { 0 };
@@ -31,7 +31,7 @@ wchar_t* UrlEncode(const wchar_t* url, unsigned long* platformErrorCode)
 	if (!SUCCEEDED(apiResult) && apiResult != E_POINTER)  //E_POINTER expected
 		return NULL;
 
-	dest = (wchar_t*)AllocateMemory((destSize) * sizeof(wchar_t));
+	dest = (wchar_t*)idAllocateMemory((destSize) * sizeof(wchar_t));
 
 	if (dest == NULL)
 		return NULL;
@@ -40,7 +40,7 @@ wchar_t* UrlEncode(const wchar_t* url, unsigned long* platformErrorCode)
 
 	if (!SUCCEEDED(apiResult))
 	{
-		FreeMemory(dest);
+		idFreeMemory(dest);
 		*dest = NULL;
 		return NULL;
 	}
@@ -48,7 +48,7 @@ wchar_t* UrlEncode(const wchar_t* url, unsigned long* platformErrorCode)
 	return dest;
 }
 
-wchar_t* UrlDecode(const wchar_t* url, unsigned long* platformErrorCode)
+wchar_t* idUrlDecode(const wchar_t* url, unsigned long* platformErrorCode)
 {
 	HRESULT apiResult = E_FAIL;
 	wchar_t sizeTest[1] = { 0 };
@@ -68,7 +68,7 @@ wchar_t* UrlDecode(const wchar_t* url, unsigned long* platformErrorCode)
 	if (!SUCCEEDED(apiResult) && apiResult != E_POINTER)  //E_POINTER expected
 		return NULL;
 
-	dest = (wchar_t*)AllocateMemory((destSize) * sizeof(wchar_t));
+	dest = (wchar_t*)idAllocateMemory((destSize) * sizeof(wchar_t));
 
 	if (dest == NULL)
 		return NULL;
@@ -77,7 +77,7 @@ wchar_t* UrlDecode(const wchar_t* url, unsigned long* platformErrorCode)
 
 	if (!SUCCEEDED(apiResult))
 	{
-		FreeMemory(dest);
+		idFreeMemory(dest);
 		*dest = NULL;
 		return NULL;
 	}

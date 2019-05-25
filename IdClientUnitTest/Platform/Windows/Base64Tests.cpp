@@ -11,9 +11,11 @@ UT_BeginTest(Base64EncodeTextTest)
 	const wchar_t* dataBase64 = L"U2FudG9zaCBpcyBhIGdvb2QgYm95";
 	unsigned long platformErrorCode = 0;
 
-	wchar_t* base64 = Base64Encode((const uint8_t*)data, strlen(data), &platformErrorCode);
+	wchar_t* base64 = idBase64Encode((const uint8_t*)data, strlen(data), &platformErrorCode);
 	
 	UT_AssertEquals(wcscmp(base64, dataBase64), 0);
+
+	idFreeMemory((void**)&base64);
 
 }
 UT_EndTest

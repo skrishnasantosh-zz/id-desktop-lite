@@ -12,18 +12,18 @@ UT_BeginTest(UrlEncodeUrlTest)
 	wchar_t* decodeResult = NULL;
 	unsigned long platformErrorCode = 0;
 
-	encodeResult = UrlEncode(googleQuery, &platformErrorCode);
+	encodeResult = idUrlEncode(googleQuery, &platformErrorCode);
 
 	UT_AssertNotNull(encodeResult);
 
-	decodeResult = UrlDecode(encodeResult, &platformErrorCode);
+	decodeResult = idUrlDecode(encodeResult, &platformErrorCode);
 
-	UT_AssertNotNullCleanup(decodeResult, FreeMemory((void**)&encodeResult));
+	UT_AssertNotNullCleanup(decodeResult, idFreeMemory((void**)&encodeResult));
 
 	UT_AssertEquals(wcscmp(decodeResult, googleQuery), 0);
 
-	FreeMemory((void**)&encodeResult);
-	FreeMemory((void**)&decodeResult);
+	idFreeMemory((void**)&encodeResult);
+	idFreeMemory((void**)&decodeResult);
 }
 UT_EndTest
 

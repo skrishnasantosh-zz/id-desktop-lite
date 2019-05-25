@@ -14,13 +14,17 @@ EXPORTS
 
 
 	
-	UrlEncode
-	UrlDecode
-	Base64Encode
-	HmacSha1
+	idUrlEncode
+	idUrlDecode
+	idBase64Encode
+	idHmacSha1
 	;HttpGet
 	;HttpPost
 	;GetPlatformName
-	AllocateMemory
-	ReallocateMemory
-	FreeMemory
+	idAllocateMemory
+	idReallocateMemory
+	idFreeMemory
+
+
+	oa1GetNonce
+	oa1GetTimestampStr
