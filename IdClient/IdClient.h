@@ -1,7 +1,9 @@
 #pragma once
 
 #include <inttypes.h>
-#include "Internal/HToken.h"
+
+#define AUTH_URL_MAXSTR (2048) //2KB only on IE - hence Adsk Identity would support only that
+#define AUTH_GEN_MAXSTR (1024)
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,53 +17,70 @@ enum OAuthType
 
 struct __oaCommon
 {
-	wchar_t* m_clientKey;
-	wchar_t* m_clientSecret;
-	wchar_t* m_callBackUrl;
-	wchar_t* m_token;	
-	wchar_t* m_secret;
+	char16_t m_clientKey[AUTH_GEN_MAXSTR];
+	char16_t m_clientSecret[AUTH_GEN_MAXSTR];
+	char16_t m_callBackUrl[AUTH_GEN_MAXSTR];
+	char16_t m_token[AUTH_GEN_MAXSTR];
+	char16_t m_secret[AUTH_GEN_MAXSTR];
 
 	uint8_t m_isAuthorized;
 
 	unsigned long long m_expiresInMs;
-
-	wchar_t* m_userName;
-	wchar_t* m_userId;
 };
 
-union __oaType
+union __oaData
 {
-	struct __oaCommon oa1; //oa1.m_token is requesttoken if isAuthorized is false
-	struct __oa2
+	struct 
 	{
-		wchar_t* m_refreshToken;
-		wchar_t* m_tokenType;
-		wchar_t* m_authorizationCode;
-	} oa2;
+		struct __oaCommon m_data; //oa1.m_token is requesttoken if isAuthorized is false
+
+		char16_t m_userName[AUTH_GEN_MAXSTR];
+		char16_t m_userId[AUTH_GEN_MAXSTR];
+	} m_oa1;
+
+	struct
+	{
+		struct __oaCommon m_data;
+
+		char16_t m_refreshToken[AUTH_GEN_MAXSTR];
+		char16_t m_tokenType[AUTH_GEN_MAXSTR];
+		char16_t m_authorizationCode[AUTH_GEN_MAXSTR];
+
+	} m_oa2;
 };
 
 typedef struct __oa
 {
+	char16_t m_environ[4];
 	enum OAuthType m_authType;
-	union __oaType oa;
+	union __oaData m_oa;
+
 } *HAUTH;
 
+#ifdef _WIN32
+#define CHAR_TYPE wchar_t
+#elif defined(__APPLE__) || defined(__linux__) || defined(__unix__)
+#define CHAR_TYPE char32_t
+#else
+#error Unsupported platform
+#endif
 
-HTOKEN CreateTokenAuthorize(enum AuthType authType, const wchar_t* environ, const wchar_t* clientKey, const wchar_t* clientSecret, const wchar_t* callbackUrl);
 
-HTOKEN GetAccessToken(HTOKEN* phToken);
+HAUTH CreateTokenAuthorize(enum AuthType authType, const CHAR_TYPE* env, const const CHAR_TYPE* clientKey, const CHAR_TYPE* clientSecret, const CHAR_TYPE* callbackUrl);
 
-HTOKEN RefreshToken(HTOKEN hToken);
-int ValidateToken(HTOKEN hToken);
+HAUTH GetAccessToken(HAUTH* phToken);
 
-void FreeToken(HTOKEN* phToken);
+HAUTH RefreshToken(HAUTH hToken);
+int ValidateToken(HAUTH hToken);
 
-const wchar_t* GetToken(HTOKEN hToken);
-const wchar_t* GetSecret(HTOKEN hToken);
-const wchar_t* GetUserName(HTOKEN hToken);
-const wchar_t* GetUserId(HTOKEN hToken);
+void FreeToken(HAUTH* phToken);
 
-const time_t GetTokenExpiry(HTOKEN hToken);
+const wchar_t* GetToken(HAUTH hToken);
+const wchar_t* GetSecret(HAUTH hToken);
+const wchar_t* GetUserName(HAUTH hToken);
+const wchar_t* GetUserId(HAUTH hToken);
+
+const time_t GetTokenExpiry(HAUTH hToken);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,6 @@
 #pragma once
+
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,7 +12,7 @@ typedef const char* (*fnTest)();
 
 #define UT_BeginTest(testName) const char* testName() { \
 								const char *__message = NULL; 
-	
+
 #define UT_EndTest return __message; }
 
 
@@ -19,13 +21,16 @@ typedef const char* (*fnTest)();
 
 #define UT_EndTestGroup return NULL; }
 
-#define UT_Assert(test, message) do { if (!(test)) return message; } while (0)
+#define UT_AssertMessage(test, message) do { if (!(test)) return message; } while (0)
+#define UT_Assert(test) do { if (!(test)) return "Assert FAILED : "#test ; } while (0)
 
-#define UT_AssertEquals(a, b) do { if ((a != b)) return "AssertEquals FAILED : "#a "==" #b ; } while (0)
+#define UT_AssertEquals(a, b) do { if ((a != b)) return "AssertEquals FAILED : "#a "==" #b; } while (0)
 #define UT_AssertNotEquals(a, b) do { if ((a == b)) return "AssertNotEquals FAILED : "#a "==" #b ; } while (0)
 
 #define UT_AssertNotNull(a) if (a == NULL) return "AssertNotNull FAILED : " #a;
 #define UT_AssertNotNullCleanup(a, b) if (a == NULL) { b; return "AssertNotNull FAILED : " #a; }
+
+#define UT_AssertGreaterThan(a, b) do { if ((a < b)) return "AssertGreaterThan FAILED : "#a "==" #b ; } while (0)
 
 
 #define UT_RunTestGroup(testGroup) testGroup();

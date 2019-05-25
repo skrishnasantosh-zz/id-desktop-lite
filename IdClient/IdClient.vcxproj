@@ -39,7 +39,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -94,7 +94,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <ModuleDefinitionFile>Library_$(Configuration).def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
       <Command>COPY $(TargetPath) $(SolutionDir)..\Dist\
@@ -137,32 +138,22 @@ COPY $(TargetDir)IdClient.lib $(SolutionDir)..\Dist\</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="HToken.h" />
-    <ClInclude Include="IdApp.h" />
     <ClInclude Include="IdClient.h" />
-    <ClInclude Include="OAuth1\OAuth1.h" />
+    <ClInclude Include="Internal\IdApp.h" />
+    <ClInclude Include="Internal\OAuth.h" />
     <ClInclude Include="Platform.h" />
+    <ClInclude Include="UnitTests\UT.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="IdClient.cpp" />
-    <ClCompile Include="OAuth1\AuthImpl.cpp" />
-    <ClCompile Include="Platform\Win32\Base64.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="Platform\Win32\HmacSha1.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="Platform\Win32\main.cpp" />
-    <ClCompile Include="Platform\Win32\Memory.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="Platform\Win32\UrlLib.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Library_Debug.def" />
+    <ClCompile Include="OAuth1\OAuth1.cpp" />
+    <ClCompile Include="Platform\Windows\Platform.cpp" />
+    <ClCompile Include="UnitTests\Base64EncodingTests.cpp" />
+    <ClCompile Include="UnitTests\HmacSha1Tests.cpp" />
+    <ClCompile Include="UnitTests\OAuth1Tests.cpp" />
+    <ClCompile Include="UnitTests\UrlEncodingTests.cpp" />
+    <ClCompile Include="UnitTests\UtMain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

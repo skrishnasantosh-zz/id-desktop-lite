@@ -12,3 +12,11 @@
 
 BEGIN_NAMESPACE3(Autodesk, Identity, Client)
 END_NAMESPACE3()
+
+#ifdef _WIN32
+#ifdef _WINDLL
+#define API __declspec(dllexport)
+#else
+#define API __declspec(dllimport)
+#endif
+#endif

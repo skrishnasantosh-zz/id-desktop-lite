@@ -1,32 +1,78 @@
 #pragma once
 
-#include <string.h>
-#include <stdlib.h>
-#include <inttypes.h>
+#include <string>
+#include <vector>
+#include <map>
 
-typedef char* UTF8Char;
+#include "./Internal/IdApp.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+using namespace std;
+
+typedef u16string pstring;
+typedef char16_t pchar;
+
+typedef enum 
+{
+	HTTP_GET,
+	HTTP_POST,
+	HTTP_PUT,
+	HTTP_DELETE,
+	HTTP_PATCH
+}HttpMethod;
+
+BEGIN_NAMESPACE4(Autodesk, Identity, Client, Internal)
+
+typedef struct __responseHttp
+{
+	int m_httpStatusCode;
+	pstring m_content;
+
+}HttpResponse;
+
+typedef struct __url
+{
+	pstring m_protocol;
+	pstring m_host;
+	unsigned int m_port;
+
+	pstring m_path;
+	pstring m_fragment;
+
+	pstring m_queryString;
+
+	map<pstring, pstring> m_queries;
+
+}Url;
+
+class Platform
+{
+private:	
+
+public:
+	pstring UrlEncode(const pstring& url);
+	pstring UrlDecode(const pstring& url);	
+
+	pstring Base64Encode(const vector<uint8_t>& data);
+
+	vector<uint8_t> HmacSha1(const vector<uint8_t>& data, const vector<uint8_t>& key);
+
+	HttpResponse HttpGet(const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers); //Returns HTTP Status Codes. 
+	HttpResponse HttpPost(const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers); //Returns HTTP Status Codes. 
+
+	bool TryParseUrl(const pstring& fullUrl, Url& url);
+
+public:
+
+	template<class TString>
+	TString ToDefaultString(const pstring& str);
+
+	template<class TString>
+	pstring FromDefaultString(const TString& str);
+
+	pstring FromMbs(const string& str);
+
+	pstring FromUI64(uint64_t num);
+};
 
 
-wchar_t* idUrlEncode(const wchar_t* url, unsigned long* platformErrorCode);
-wchar_t* idUrlDecode(const wchar_t* url, unsigned long* platformErrorCode);
-
-wchar_t* idBase64Encode(const uint8_t* data, const size_t dataLen, unsigned long* platformErrorCode);
-
-uint8_t* idHmacSha1(size_t* destLen, const uint8_t* data, const size_t dataLen, const uint8_t* key, const size_t keyLen, unsigned long* platformErrorCode);
-
-wchar_t* idHttpGet(int* statusCode, const wchar_t* fullUrl, const wchar_t* headers, unsigned long* platformErrorCode); //Returns HTTP Status Codes. 
-wchar_t* idHttpPost(int* statusCode, const wchar_t* fullUrl, const wchar_t* headers, unsigned long* platformErrorCode); //Returns HTTP Status Codes. 
-
-wchar_t* idGetPlatformName(wchar_t* platformName);
-
-void* idAllocateMemory(const size_t destSize);
-void* idReallocateMemory(void* block, const size_t destSize);
-int idFreeMemory(void** block);
-
-#ifdef __cplusplus
-}
-#endif
+END_NAMESPACE4()
