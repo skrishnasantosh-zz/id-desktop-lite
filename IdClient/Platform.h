@@ -46,7 +46,10 @@ typedef struct __url
 
 class Platform
 {
-private:	
+private:
+
+	template<class TString>
+	TString GetHttpAgentName();
 
 public:
 	pstring UrlEncode(const pstring& url);
@@ -63,15 +66,24 @@ public:
 
 public:
 
-	template<class TString>
-	TString ToDefaultString(const pstring& str);
+	class _strings
+	{
+	public:
+		template<class TString>
+		TString ToDefaultString(const pstring& str);
 
-	template<class TString>
-	pstring FromDefaultString(const TString& str);
+		template<class TString>
+		pstring FromDefaultString(const TString& str);
 
-	pstring FromMbs(const string& str);
+		pstring FromMbs(const string& str);
 
-	pstring FromUI64(uint64_t num);
+		pstring FromUI64(uint64_t num);
+
+		string ToUtf8(const pstring& str);
+
+		string ToMbs(const pstring& str);
+
+	} Strings;
 };
 
 

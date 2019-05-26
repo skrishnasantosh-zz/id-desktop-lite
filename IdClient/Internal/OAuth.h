@@ -31,15 +31,22 @@ public:
 public: //public for UT's sake
 	pstring GetNonce();
 	pstring GetTimestampStr();
-
-	pstring GetSignature(HttpMethod method, const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers, const pstring& nonce = nullptr, const pstring& timestamp = nullptr);
-	pstring GetSignature(HttpMethod method, const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers);	
+		
+	pstring GetAuthHeader();
 
 public:
 	pstring RequestToken(const pstring& url);
 	pstring Authorize(const pstring& url);
 
 	pstring GetAccessToken(const pstring& url, const pstring& authCodeOrVerifier);
+
+	pstring GetAuthHeaderStr(HttpMethod method, const pstring& url, const map<pstring, pstring>& queries); 
+	pstring GetSignature(HttpMethod method, const pstring& url, const map<pstring, pstring>& queries, pstring& nonce, pstring& timestamp);
+
+private:
+	pstring GetHttpMethodStr(HttpMethod method);
+	pstring GetFullyFormedUrl(Internal::Url& urlParts);
+	pstring GetQueryParamsForSigning(map<pstring, pstring>& queries, const pstring& nonce, const pstring& timeStamp);
 };
 
 

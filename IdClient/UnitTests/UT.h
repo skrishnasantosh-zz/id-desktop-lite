@@ -1,8 +1,9 @@
 #pragma once
 
-#pragma once
 #include <stdio.h>
 #include <stdlib.h>
+
+#pragma warning(disable:4702)
 
 typedef const char* (*fnTest)();
 

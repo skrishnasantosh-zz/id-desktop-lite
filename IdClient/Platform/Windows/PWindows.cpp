@@ -1,5 +1,8 @@
+#ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
+
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 
 #include <Windows.h>
 #include <Shlwapi.h>
@@ -39,7 +42,7 @@ pstring Platform::UrlEncode(const pstring& url)
 	if (urlLen == 0 || urlLen > INTERNET_MAX_URL_LENGTH)
 		return pstring();
 
-	wstring urlW = ToDefaultString<wstring>(url);
+	wstring urlW = Strings.ToDefaultString<wstring>(url);
 
 	apiResult = UrlEscape(urlW.c_str(), sizeTest, &destSize, URL_ESCAPE_PERCENT | URL_ESCAPE_SEGMENT_ONLY | URL_ESCAPE_ASCII_URI_COMPONENT);
 
@@ -67,7 +70,7 @@ pstring Platform::UrlEncode(const pstring& url)
 	}
 
 	destW.resize(destSize);
-	pstring dest = FromDefaultString<wstring>(destW);
+	pstring dest = Strings.FromDefaultString<wstring>(destW);
 	return dest;
 }
 
@@ -84,7 +87,7 @@ pstring Platform::UrlDecode(const pstring& url)
 	if (urlLen == 0 || urlLen > INTERNET_MAX_URL_LENGTH)
 		return pstring();
 
-	wstring urlW = ToDefaultString<wstring>(url);
+	wstring urlW = Strings.ToDefaultString<wstring>(url);
 
 	apiResult = UrlUnescape(&(urlW.data())[0], sizeTest, &destSize, URL_ESCAPE_PERCENT | URL_ESCAPE_SEGMENT_ONLY | URL_ESCAPE_ASCII_URI_COMPONENT);
 
@@ -112,7 +115,7 @@ pstring Platform::UrlDecode(const pstring& url)
 	}
 
 	destW.resize(destSize);
-	pstring dest = FromDefaultString<wstring>(destW);
+	pstring dest = Strings.FromDefaultString<wstring>(destW);
 	
 	return dest;
 }
@@ -146,7 +149,7 @@ pstring Platform::Base64Encode(const vector<uint8_t>& data)
 		return pstring();
 	}
 
-	pstring dest = FromDefaultString<wstring>(destW);
+	pstring dest = Strings.FromDefaultString<wstring>(destW);
 
 	return dest;
 }
@@ -230,14 +233,40 @@ vector<uint8_t> Platform::HmacSha1(const vector<uint8_t>& data, const vector<uin
 	return hashValue; //PlatformErrorCode set to 0 and return NULL if out of memory
 }
 
-HttpResponse HttpGet(const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers)
+HttpResponse Platform::HttpGet(const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers)
 {
 	pstring content = u"";
+	HttpResponse response;
 
+	HINTERNET hSession, hConnection, hResult;
+
+	response.m_httpStatusCode = 0;
+
+	wstring agentName = GetHttpAgentName<wstring>();
+
+	Internal::Url urlParts;
+
+	if (!TryParseUrl(url, urlParts))
+		return response;
+
+	hSession = ::InternetOpen(agentName.c_str(), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+
+	if (hSession == NULL)
+	{
+		m_platformErrorCode = ::GetLastError();
+		return response;
+	}
+	
+	wstring wideUrl = Strings.ToDefaultString<wstring>(url);
+
+	hConnection = ::InternetConnect(hSession, wideUrl.c_str(), INTERNET_DEFAULT_HTTP_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, NULL);
+
+	//TODO:
+	
 	return { 0, content };
 }
 
-HttpResponse HttpPost(const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers)
+HttpResponse Platform::HttpPost(const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers)
 {
 	pstring content = u"";
 
@@ -249,7 +278,7 @@ bool Platform::TryParseUrl(const pstring& fullUrl, Url& url)
 	bool ret = false;
 	URL_COMPONENTS urlComponents = { 0 };
 
-	wstring wstr = ToDefaultString<wstring>(fullUrl);
+	wstring wstr = Strings.ToDefaultString<wstring>(fullUrl);
 
 	urlComponents.dwStructSize = sizeof(URL_COMPONENTS);
 	urlComponents.dwSchemeLength = DWORD(-1);
@@ -267,19 +296,19 @@ bool Platform::TryParseUrl(const pstring& fullUrl, Url& url)
 		if (urlComponents.dwSchemeLength > 0 && urlComponents.lpszScheme != NULL)
 		{
 			wstring wstr(urlComponents.lpszScheme, urlComponents.dwSchemeLength);
-			url.m_protocol = FromDefaultString(wstr);
+			url.m_protocol = Strings.FromDefaultString(wstr);
 		}
 
 		if (urlComponents.dwHostNameLength > 0 && urlComponents.lpszHostName != NULL)
 		{
 			wstring wstr(urlComponents.lpszHostName, urlComponents.dwHostNameLength);
-			url.m_host = FromDefaultString(wstr);
+			url.m_host = Strings.FromDefaultString(wstr);
 		}
 
 		if (urlComponents.dwUrlPathLength > 1 && urlComponents.lpszUrlPath != NULL)
 		{
 			wstring wstr(urlComponents.lpszUrlPath, 1, urlComponents.dwUrlPathLength - 1);
-			url.m_path = FromDefaultString(wstr);
+			url.m_path = Strings.FromDefaultString(wstr);
 		}
 
 		if (urlComponents.dwExtraInfoLength > 0 && urlComponents.lpszExtraInfo != NULL)
@@ -291,13 +320,13 @@ bool Platform::TryParseUrl(const pstring& fullUrl, Url& url)
 
 			if (fragmentPos != wstring::npos)
 			{
-				url.m_queryString = FromDefaultString(query.substr(1, fragmentPos - 1));
+				url.m_queryString = Strings.FromDefaultString(query.substr(1, fragmentPos - 1));
 
 				if (fragmentPos + 1 < query.length())
-					url.m_fragment = FromDefaultString(query.substr(fragmentPos + 1, query.length() - 1 - (fragmentPos + 1)));
+					url.m_fragment = Strings.FromDefaultString(query.substr(fragmentPos + 1, query.length() - 1 - (fragmentPos + 1)));
 			}
 			else
-				url.m_queryString = FromDefaultString(query);
+				url.m_queryString = Strings.FromDefaultString(query);
 		}
 
 		url.m_port = urlComponents.nPort;
@@ -306,31 +335,18 @@ bool Platform::TryParseUrl(const pstring& fullUrl, Url& url)
 	return ret;
 }
 
-template<class TString>
-TString Platform::ToDefaultString(const pstring& str)
-{	
-	wstring strRet(str.begin(), str.end());
-	return strRet;
-}
+
+#define AGENT_FORMAT_STRING L"AdDesktopClient[version(1.0),platform(win64),os(#),defaultCharSize(2)]";
 
 template<class TString>
-pstring Platform::FromDefaultString(const TString& str)
+TString Platform::GetHttpAgentName()
 {
-	return pstring(str.begin(), str.end());
+	wstring agentName = AGENT_FORMAT_STRING;
+
+	//TODO: Fill the OS Version before sending this
+
+	return agentName;
 }
 
-pstring Platform::FromMbs(const string& str)
-{
-	wstring strRet;
-	strRet.resize(str.length());
 
-	mbstowcs(&(strRet.data())[0], str.c_str(), str.length());
-
-	return FromDefaultString<wstring>(strRet);
-}
-
-pstring Platform::FromUI64(uint64_t num)
-{
-	wstring str = std::to_wstring(num);
-	return FromDefaultString<wstring>(str);
-}
+#endif //_WIN32

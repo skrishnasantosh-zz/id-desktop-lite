@@ -148,7 +148,8 @@ COPY $(TargetDir)IdClient.lib $(SolutionDir)..\Dist\</Command>
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="IdClient.cpp" />
     <ClCompile Include="OAuth1\OAuth1.cpp" />
-    <ClCompile Include="Platform\Windows\Platform.cpp" />
+    <ClCompile Include="Platform\Windows\PWindows.cpp" />
+    <ClCompile Include="Platform\Windows\Strings.cpp" />
     <ClCompile Include="UnitTests\Base64EncodingTests.cpp" />
     <ClCompile Include="UnitTests\HmacSha1Tests.cpp" />
     <ClCompile Include="UnitTests\OAuth1Tests.cpp" />
