@@ -201,25 +201,30 @@ vector<uint8_t> Platform::HmacSha1(const vector<uint8_t>& data, const vector<uin
 	result = CryptImportKey(hProv, (BYTE*)blob, blobSize, 0, CRYPT_IPSEC_HMAC_KEY, &hKey);
 	if (!result)
 		m_platformErrorCode = GetLastError();
+	else
+		result = CryptCreateHash(hProv, CALG_HMAC, hKey, 0, &hHmacHash);
 
-	result = CryptCreateHash(hProv, CALG_HMAC, hKey, 0, &hHmacHash);
 	if (!result)
 		m_platformErrorCode = GetLastError();
+	else
+		result = CryptSetHashParam(hHmacHash, HP_HMAC_INFO, (BYTE*)&hMacInfo, 0);
 
-	result = CryptSetHashParam(hHmacHash, HP_HMAC_INFO, (BYTE*)&hMacInfo, 0);
 	if (!result)
 		m_platformErrorCode = GetLastError();
+	else
+		result = CryptHashData(hHmacHash, (BYTE*)&data[0], dataLen, 0);
 
-	result = CryptHashData(hHmacHash, (BYTE*)&data[0], dataLen, 0);
 	if (!result)
 		m_platformErrorCode = GetLastError();
+	else
+	{
+		hashValue.resize(hashSize, 0);
+		dwDataLen = hashSize;
 
-	hashValue.resize(hashSize, 0);
-	dwDataLen = hashSize;
-
-	result = CryptGetHashParam(hHmacHash, HP_HASHVAL, (BYTE*)&(hashValue[0]), &dwDataLen, 0);
-	if (!result)
-		m_platformErrorCode = GetLastError();
+		result = CryptGetHashParam(hHmacHash, HP_HASHVAL, (BYTE*) & (hashValue[0]), &dwDataLen, 0);
+		if (!result)
+			m_platformErrorCode = GetLastError();
+	}
 
 	if (hHmacHash)
 		CryptDestroyHash(hHmacHash);
@@ -238,7 +243,7 @@ HttpResponse Platform::HttpGet(const pstring& url, const map<pstring, pstring>& 
 	pstring content = u"";
 	HttpResponse response;
 
-	HINTERNET hSession, hConnection, hResult;
+	HINTERNET hSession, hConnection, hRequest;	
 
 	response.m_httpStatusCode = 0;
 
@@ -256,14 +261,50 @@ HttpResponse Platform::HttpGet(const pstring& url, const map<pstring, pstring>& 
 		m_platformErrorCode = ::GetLastError();
 		return response;
 	}
-	
-	wstring wideUrl = Strings.ToDefaultString<wstring>(url);
 
-	hConnection = ::InternetConnect(hSession, wideUrl.c_str(), INTERNET_DEFAULT_HTTP_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, NULL);
+	wstring wideUrl = Strings.ToDefaultString<wstring>(urlParts.m_host);
+	wstring widePath = Strings.ToDefaultString<wstring>(urlParts.m_path);
 
-	//TODO:
+	INTERNET_PORT port = INTERNET_INVALID_PORT_NUMBER;
+	DWORD flags = 0;
+
+	if (urlParts.m_protocol.back() == u'S' || urlParts.m_protocol.back() == u's')
+	{
+		port = INTERNET_DEFAULT_HTTPS_PORT;
+		flags = INTERNET_FLAG_SECURE | INTERNET_FLAG_NO_UI;
+	}
+	else
+	{
+		port = INTERNET_DEFAULT_HTTP_PORT;
+		flags = INTERNET_FLAG_NO_UI;
+	}
+
+	hConnection = ::InternetConnect(hSession, wideUrl.c_str(), port, NULL, NULL, INTERNET_SERVICE_HTTP, 0, NULL);
+	if (hConnection)
+	{
+		const wchar_t* acceptTypes[] = { L"*/*", NULL };
+
+		hRequest = ::HttpOpenRequest(hConnection, L"GET", widePath.c_str(), L"HTTP/1.1", NULL, acceptTypes, flags, 0);
+		if (hRequest)
+		{
+			/*if (::HttpSendRequest(hRequest, )
+			{
+
+				canContinue = HttpEndRequest(hRequest, NULL, 0, 0);
+			}*/
+		}
+		else
+			m_platformErrorCode = ::GetLastError();
+
+		::InternetCloseHandle(hConnection);
+	}
+	else
+		m_platformErrorCode = ::GetLastError();
 	
-	return { 0, content };
+	::InternetCloseHandle(hSession);
+
+
+	return response;
 }
 
 HttpResponse Platform::HttpPost(const pstring& url, const map<pstring, pstring>& queries, const map<pstring, pstring>& headers)
