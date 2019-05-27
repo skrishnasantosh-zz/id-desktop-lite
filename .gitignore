@@ -31,7 +31,6 @@
 *.out
 *.app
 
-*.vcxproj.filters
 *.vcxproj.user
 
 IdClient/.vs/

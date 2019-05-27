@@ -74,12 +74,12 @@ pstring OAuth1::GetAuthHeaderStr(HttpMethod method, const pstring& url, const ma
 
 	pstring signature = GetSignature(method, url, queries, nonce, timestamp);
 
-	pstring header = u"oauth_consumer_key = \"" + m_clientKey + u"\", " +
+	authHeader.append(u"oauth_consumer_key = \"" + m_clientKey + u"\", " +
 		u"oauth_signature_method = \"HMAC_SHA1\", oauth_timestamp = \"" + timestamp + u"\", " +
 		u"oauth_nonce = \"" + nonce + u"\", oauth_version = \"1.0\", " +
-		u"oauth_signature = \"" + signature + u"\"";
+		u"oauth_signature = \"" + signature + u"\"");
 	
-	return header;
+	return authHeader;
 }
 
 

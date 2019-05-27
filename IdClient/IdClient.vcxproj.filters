@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Platform">
+      <UniqueIdentifier>{d52ef5a6-adb9-421d-b9df-4b82cc5cdc6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\Windows">
+      <UniqueIdentifier>{c8d478b3-a49e-4835-8eaf-9335c8a6644e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\ARM">
+      <UniqueIdentifier>{b10706c0-0693-42f6-af22-0b07d1ae02e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\Linux">
+      <UniqueIdentifier>{afbc65e0-8d42-4815-b262-eaaee58c8407}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\Mac">
+      <UniqueIdentifier>{96cc91c3-ab11-4054-8479-bd4e58c49ce3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OAuth1">
+      <UniqueIdentifier>{075371f0-8b3e-44c9-bcbe-e1e70eda6303}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OAuth2">
+      <UniqueIdentifier>{b4e063c0-759a-475d-a995-f4d4ee275c5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Internal">
+      <UniqueIdentifier>{22f68b4e-6e7a-4e4f-8a1f-15487a259b6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit Tests">
+      <UniqueIdentifier>{a7640cb1-da4d-4501-85f5-ecd2fb2c25d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Platform\Common">
+      <UniqueIdentifier>{46bee91e-b51f-4177-8973-85febe486587}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IdClient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitTests\UT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>Header Files\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Internal\OAuth.h">
+      <Filter>Header Files\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Internal\IdApp.h">
+      <Filter>Header Files\Internal</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DllMain.cpp">
+      <Filter>Source Files\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="IdClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTests\UrlEncodingTests.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTests\UtMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTests\Base64EncodingTests.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTests\HmacSha1Tests.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="OAuth1\OAuth1.cpp">
+      <Filter>Source Files\OAuth1</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTests\OAuth1Tests.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows\PWindows.cpp">
+      <Filter>Source Files\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows\Strings.cpp">
+      <Filter>Source Files\Platform\Windows</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
